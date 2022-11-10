@@ -10,6 +10,10 @@ import (
 	"syscall"
 )
 
+func foresightUncoverageLimitsUnix() string {
+ 	return "Foresight uncoverage function into limits_unix file!"
+}
+
 // GetFileLimit attempts to raise the ulimit to the maximum hard limit and returns that value.
 func GetFileLimit() int {
 	limit := 50000
