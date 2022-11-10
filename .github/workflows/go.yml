@@ -76,7 +76,6 @@ jobs:
         uses: runforesight/foresight-test-kit-action@v1
         with:
           api_key: ${{ secrets.FORESIGHT_PROJECT_WALL_APIKEY }}
-          test_framework: golang
           coverage_format: golang
           coverage_path: |
               coverage.out
