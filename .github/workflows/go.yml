@@ -1,11 +1,14 @@
 name: tests
 
 on:
-  push:
-    branches: [ "master", "develop" ]
+  workflow_dispatch:
   pull_request:
     branches: develop
-
+    
+env:
+  FORESIGHT_UPLOADER_SIGNER_URL: https://upload.service.runforesight.us
+  WORKFLOW_TELEMETRY_BASE_URL: https://api.service.runforesight.us
+  
 jobs:
   test:
     name: Test
@@ -15,6 +18,11 @@ jobs:
         go-version: [ "1.18" ]
     runs-on: ${{ matrix.os }}
     steps:
+      - name: Collect Workflow Telemetry
+        if: always()
+        uses: runforesight/foresight-workflow-kit-action@v1
+        with:
+          api_key: ${{ secrets.FORESIGHT_PROJECT_WALL_APIKEY }}
       -
         name: setup Go ${{ matrix.go-version }}
         uses: actions/setup-go@v3
@@ -25,19 +33,36 @@ jobs:
         uses: actions/checkout@v3
       -
         name: simple test
-        run: go test -v ./...
+        run: go test -v -json ./... > ./test-report-simple.json
       -
         name: test with GC pressure
-        run: go test -v ./...
+        run: go test -v -json ./... > ./test-report-gc.json
         env:
           GOGC: 1
       -
         name: test with race detector
-        run: go test -v -race ./...
+        run: go test -v -json -race ./... > ./test-report-race.json
+        
+      - name: Analyze Test and/or Coverage Results
+        if: always()
+        uses: runforesight/foresight-test-kit-action@v1
+        with:
+          api_key: ${{ secrets.FORESIGHT_PROJECT_WALL_APIKEY }}
+          test_framework: golang
+          test_format: json
+          test_path: |
+            - ./test-report-simple.json
+            - ./test-reports-gc.json
+            - ./test-reports-race.json
   coverage:
     name: Coverage
     runs-on: ubuntu-latest
     steps:
+      - name: Collect Workflow Telemetry
+        if: always()
+        uses: runforesight/foresight-workflow-kit-action@v1
+        with:
+          api_key: ${{ secrets.FORESIGHT_PROJECT_WALL_APIKEY }}
       - name: setup Go
         uses: actions/setup-go@v3
         with:
@@ -46,6 +71,12 @@ jobs:
         uses: actions/checkout@v3
       - name: measure coverage
         run: go test -v -coverprofile=coverage.out ./...
-      - name: report coverage
-        run: |
-          bash <(curl -s https://codecov.io/bash)
+      - name: Analyze Test and/or Coverage Results
+        if: always()
+        uses: runforesight/foresight-test-kit-action@v1
+        with:
+          api_key: ${{ secrets.FORESIGHT_PROJECT_WALL_APIKEY }}
+          test_framework: golang
+          coverage_format: golang
+          coverage_path: |
+              coverage.out
