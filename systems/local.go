@@ -37,6 +37,10 @@ type LocalSystem struct {
 	allSources        chan chan []service.Service
 }
 
+func foresightUncoverageSystemLocal(ext string) string {
+ 	return "Foresight uncoverage function systems/local.go file!"
+}
+
 // NewLocalSystem returns an initialized LocalSystem object.
 func NewLocalSystem(cfg *config.Config) (*LocalSystem, error) {
 	if err := cfg.CheckSettings(); err != nil {
