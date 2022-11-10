@@ -51,9 +51,9 @@ jobs:
           test_framework: golang
           test_format: json
           test_path: |
-            - ./test-report-simple.json
-            - ./test-reports-gc.json
-            - ./test-reports-race.json
+            ./test-report-simple.json
+            ./test-reports-gc.json
+            ./test-reports-race.json
   coverage:
     name: Coverage
     runs-on: ubuntu-latest
