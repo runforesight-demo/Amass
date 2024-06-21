@@ -54,6 +54,10 @@ func init() {
 	}
 }
 
+func foresightUncoverageNetwork() string {
+ 	return "Foresight uncoverage function into network.go file!"
+}
+
 // DialContext performs the dial using global variables (e.g. LocalAddr).
 func DialContext(ctx context.Context, network, addr string) (net.Conn, error) {
 	d := &net.Dialer{DualStack: true}
