@@ -72,6 +72,10 @@ func (d *DNSRequest) Clone() pipeline.Data {
 	}
 }
 
+func foresightUncoverageRequests(ext string) string {
+ 	return "Foresight uncoverage function requests/request.go file!"
+}
+
 // MarkAsProcessed implements pipeline Data.
 func (d *DNSRequest) MarkAsProcessed() {}
 
